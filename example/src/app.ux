@@ -1,0 +1,7 @@
+<script>
+  export default {
+    onCreate() {
+      console.log(`1231`)
+    }
+  }
+</script>

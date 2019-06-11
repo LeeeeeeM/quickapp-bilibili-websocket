@@ -1,0 +1,106 @@
+<template>
+  <div class="demo-page">
+    <list class="d-list" id="dlist">
+      <block for="danmuList">
+        <list-item type="danmu" class="content-item">
+          <div class="top-line">
+            <text class="text-name">{{$item.name + ' :   '}}</text>
+            <text class="text-text">{{$item.text}}</text>
+          </div>
+        </list-item>
+      </block>
+    </list>
+    <input type="text" class="btn" placeholder="请输入房间号" onchange="roomChange" value="{{roomId}}" />
+    <input type="button" class="btn" onclick="join" value="进入房间" />
+    <input type="button" class="btn" onclick="close" value="关闭连接" />
+  </div>
+</template>
+
+<script>
+  import Room from '../../../src/index'
+  export default {
+    private: {
+      roomId: 13242941,
+      danmuList: [],
+      pause: false
+    },
+    onReady() {
+      this.join()
+      this.container = this.$element('dlist')
+    },
+    scrollToBottom(n) {
+      this.container.scrollTo({
+        index: n
+      })
+    },
+    roomChange(e) {
+      this.roomId = e.target.value
+    },
+    join() {
+      this.danmuList = []
+      this.room && this.room.$destroy()
+      this.room = new Room(Number(this.roomId))
+      this.room.$start().$subscribe(data => {
+        this.danmuList.push(data)
+        this.scrollToBottom(this.danmuList.length - 1)
+      })
+    },
+    close() {
+      this.room && this.room.$destroy()
+      this.room = null
+    },
+    onDestroy() {
+      this.room && this.room.$destroy()
+      this.room = null
+    }
+  }
+</script>
+
+<style>
+  .d-list {
+    height: 500px;
+    background-color: #09ba07;
+  }
+
+
+  .text-name {
+    color: #ffffff;
+    padding-left: 40px;
+    lines: 1;
+    text-overflow: ellipsis;
+  }
+
+  .text-text {
+    lines: 1;
+    text-overflow: ellipsis;
+  }
+
+  .content-item {
+    display: flex;
+    height: 50px;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .demo-page {
+    margin-top: 30px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 40px;
+    text-align: center;
+  }
+
+  .btn {
+    width: 550px;
+    height: 86px;
+    padding: 0 40px;
+    margin-top: 75px;
+    border-radius: 43px;
+    background-color: #09ba07;
+    font-size: 30px;
+    color: #ffffff;
+  }
+</style>
